@@ -26,6 +26,7 @@ export const defaultConfig: ThyWevearOptions = {
         htmlHead: "src/head_content.html",
       },
       stagingDir: resolve(tempFolderPath(), "staging/"),
+      build: "build/",
     },
   },
 };

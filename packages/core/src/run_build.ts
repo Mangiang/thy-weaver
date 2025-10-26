@@ -3,11 +3,13 @@ import { loadConfig } from "./config/config_handler.ts";
 import {
   colorizeEmiter,
   colorizeLabel,
+  fancyLogFormater,
   resolveToProjectRoot,
 } from "./utils.ts";
 import ora from "ora";
 import pico from "picocolors";
 import { moveFiles, runRolldownn } from "./build_commands.ts";
+import { runBunCompilation } from "./compile_commands.ts";
 
 const { bundler } = await loadConfig();
 const { filesystem } = bundler;
@@ -75,3 +77,47 @@ export const runBuild = async () => {
     return resolve;
   });
 };
+
+export const runCompile = async () => {
+  console.log(
+    `\n${pico.bgMagenta(pico.bold(" ThyWeaver - Running in compile mode "))}\n`,
+  );
+  const spinner = ora({
+    prefixText: colorizeEmiter("BUNDLER"),
+  });
+  spinner.start("Compiling executable ...");
+
+  const startStamp = Date.now();
+
+  if (typeof Bun === 'undefined') {
+    spinner.fail(
+      ` ${colorizeLabel("ERROR")} Cannot compile without Bun. Please make sure Bun is accessible and run \`bun --bun run compile\`.`,
+    );
+    return;
+  }
+
+  try {
+    await runRolldownn();
+    await moveFiles();
+    await runTweego();
+
+    await runBunCompilation();
+  } catch (error) {
+    spinner.fail(
+      ` ${colorizeLabel("ERROR")} Failed to compile executable:\n${error}\n`,
+    );
+  }
+
+  return new Promise((resolve) => {
+    spinner.succeed(
+      `Story compiled in ${pico.yellow(`${Date.now() - startStamp}ms`)}`,
+    );
+    console.log(
+      `\n${pico.bgGreen(
+        pico.bold(` Compilation finished in ${Date.now() - startStamp}ms `),
+      )}ㅤ\n`,
+    );
+
+    return resolve;
+  });
+}

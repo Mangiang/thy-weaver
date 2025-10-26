@@ -3,7 +3,7 @@ import { program } from "commander";
 import pkg from "../package.json" with { type: "json" };
 const { version, description } = pkg;
 import pico from "picocolors";
-import { runBuild } from "./run_build.ts";
+import { runBuild, runCompile } from "./run_build.ts";
 import { runDev } from "./run_dev.ts";
 import { rm } from "fs/promises";
 import { resolveToProjectRoot } from "./utils.ts";
@@ -13,9 +13,9 @@ program
   .name("weaver")
   .description(
     "\t\t" +
-      pico.bgBlue(pico.bgMagenta(pico.bold("  Thy Weaver  "))) +
-      "\n" +
-      description,
+    pico.bgBlue(pico.bgMagenta(pico.bold("  Thy Weaver  "))) +
+    "\n" +
+    description,
   )
   .version(version);
 
@@ -24,6 +24,13 @@ program
   .description("Build the project to dist/")
   .action(async (_str) => {
     await runBuild();
+  });
+
+program
+  .command("compile")
+  .description("Compile the project to build/")
+  .action(async (_str) => {
+    await runCompile();
   });
 
 program

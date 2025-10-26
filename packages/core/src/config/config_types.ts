@@ -34,6 +34,7 @@ export interface BundlerOptions {
     };
     stagingDir?: string;
     dist?: string;
+    build?: string;
   };
 
   swc?: SWCOptions;
