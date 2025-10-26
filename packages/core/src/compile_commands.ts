@@ -20,10 +20,30 @@ export const runBunCompilation = async () => {
   await Bun.write(filesystem!.dist + "worker.ts", `
     import { serve } from 'bun';
     import index from './index.html';
+    import { dirname } from 'path';
+
+    const BASE_MEDIA_PATH = "/media/";
+    const EXE_DIR = dirname(process.execPath);
 
     const server = serve({
       routes: {
         '/': index,
+      },
+      fetch(req) {
+        const filepath = new URL(req.url).pathname;
+        if (req.method === 'GET') {
+          if (filepath.startsWith('/favicon')) {
+            const filePath = \`\${ EXE_DIR }\${ BASE_MEDIA_PATH }favicon.svg\`;
+            const file = Bun.file(filePath);
+            return new Response(file);
+          } else if (filepath.startsWith(BASE_MEDIA_PATH)) {
+            const filePath = \`\${ EXE_DIR }\${ new URL(req.url).pathname }\`;
+            const file = Bun.file(filePath);
+            return new Response(file);
+          }
+        }
+
+        return new Response('Not Found', { status: 404 });
       },
     });
   `);
