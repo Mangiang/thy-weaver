@@ -1,0 +1,46 @@
+{
+  "name": "@thy-weaver/plugin-executable",
+  "version": "1.0.0",
+  "description": "A plugin for compiling games to executables",
+  "type": "module",
+  "files": [
+    "dist",
+    "template"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/greatsquare0/thy-weaver/tree/main/packages/plugin-executable",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/greatsquare0/thy-weaver/tree/main/packages/plugin-executable"
+  },
+  "bugs": "https://github.com/greatsquare0/thy-weaver/issues",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown --dts",
+    "dev": "tsdown --watch"
+  },
+  "keywords": [
+    "Twine",
+    "Twee",
+    "Twee3",
+    "Tweego",
+    "ThyWeaver",
+    "Weaver"
+  ],
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@types/node": "^24.0.10",
+    "tsdown": "^0.12.9",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@thy-weaver/core": "workspace:*",
+    "commander": "^14.0.0"
+  }
+}

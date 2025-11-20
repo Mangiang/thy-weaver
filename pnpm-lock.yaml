@@ -167,6 +167,28 @@ importers:
         specifier: ^1.6.1
         version: 1.6.1(markdown-it@14.1.0)(vite@5.4.19(@types/node@24.0.10)(lightningcss@1.30.1)(sass@1.89.2))
 
+  packages/plugin-executable:
+    dependencies:
+      '@thy-weaver/core':
+        specifier: workspace:*
+        version: link:../core
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.0
+    devDependencies:
+      '@tsconfig/node22':
+        specifier: ^22.0.2
+        version: 22.0.2
+      '@types/node':
+        specifier: ^24.0.10
+        version: 24.0.10
+      tsdown:
+        specifier: ^0.12.9
+        version: 0.12.9(typescript@5.8.3)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.8.3
+
 packages:
 
   '@algolia/autocomplete-core@1.17.7':
