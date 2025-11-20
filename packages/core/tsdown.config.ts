@@ -5,7 +5,7 @@ export default defineConfig({
     main: "./src/main.ts",
     cli: "./src/cli.ts",
     reload_agent: "./src/dev_server/reload_agent.ts",
-    plugin_helpers: "./src/plugin_helpers.ts",
+    plugin_helpers: "./src/plugins/helpers.ts",
   },
   sourcemap: true,
   dts: true,

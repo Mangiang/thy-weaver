@@ -1,5 +1,5 @@
 import type { Config as SWCOptions } from "@swc/core";
-import type { Command } from "commander";
+import type { Plugin } from "../plugins/helpers.ts";
 
 export interface AdditionalAsset {
   /**
@@ -50,11 +50,6 @@ export interface DevServerOptions {
    * Enables Twine debug/test mode, some formats offer testing tools when enabled
    */
   twineDebug: boolean;
-}
-
-export interface Plugin {
-  name: string;
-  command?: Command;
 }
 
 export interface ThyWevearOptions {
