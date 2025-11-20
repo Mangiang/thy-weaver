@@ -43,7 +43,7 @@ const onLog = (
       break;
   }
 };
-console.log(isTS ? "tsconfig.json" : "jsconfig.json");
+
 export const setupRolldown = () => {
   return {
     onLog,
