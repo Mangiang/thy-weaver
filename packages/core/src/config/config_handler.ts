@@ -1,7 +1,7 @@
 import { lilconfig, type Options, defaultLoaders } from "lilconfig";
 import swc from "@swc/core";
 import { defaultConfig } from "./defaults.ts";
-import { randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import { writeFile, mkdir, rm } from "node:fs/promises";
 import { isTS, resolveToProjectRoot, tempFolderPath } from "../utils.ts";
 import { resolve } from "node:path";
@@ -10,51 +10,70 @@ import { pathToFileURL } from "node:url";
 import type { ThyWevearOptions } from "./config_types.ts";
 import { deepmerge } from "deepmerge-ts";
 
+function stripDefineConfig(content: string): string {
+  const importRegex =
+    /^import\s*\{\s*defineConfig\s*\}\s*from\s*["']@thy-weaver\/core["'];?$/gm;
+
+  if (importRegex.test(content)) {
+    return content.replace(
+      importRegex,
+      "const defineConfig = (config) => config;",
+    );
+  }
+  return content;
+}
+
 const loadTsConfig = async (_filepath: string, content: string) => {
-  const script = await swc.transform(content, {
+  const sanitizedContent = stripDefineConfig(content);
+
+  const hash = createHash("md5").update(sanitizedContent).digest("hex");
+  const tempFileName = `weaver-${hash}.config.mjs`;
+  const tempFileDir = resolve(tempFolderPath(), "config");
+  const tempFilePath = resolve(tempFileDir, tempFileName);
+
+  if (existsSync(tempFilePath)) {
+    try {
+      const importPath = pathToFileURL(tempFilePath).href;
+      const result = await import(importPath);
+
+      return result.default;
+
+      // oxlint-disable-next-line no-unused-vars
+    } catch (error) {
+      console.warn("Cached config found but failed to load.");
+    }
+  }
+
+  const script = await swc.transform(sanitizedContent, {
     module: {
       type: "es6",
     },
     jsc: {
-      target: "es5",
+      target: "es2022",
       parser: {
         syntax: "typescript",
       },
     },
   });
 
-  //Generate temporary file
-  const tempFilename = `weaver-${randomUUID()}.config.mjs`;
-  const tempFileDir = resolve(tempFolderPath(), "config");
-  const tempFilepath = resolve(tempFileDir, tempFilename);
-
-  try {
-    if (!existsSync(tempFileDir)) {
-      await mkdir(tempFileDir, {
-        recursive: true,
-      });
-    }
-
-    await writeFile(tempFilepath, script.code);
-  } catch (error) {
-    console.log(error);
+  if (existsSync(tempFileDir)) {
+    await rm(tempFileDir, {
+      recursive: true,
+    });
   }
 
-  //Try and load the file
+  if (!existsSync(tempFileDir)) {
+    await mkdir(tempFileDir, {
+      recursive: true,
+    });
+  }
+
   try {
-    let importPath = tempFilepath;
-    if (existsSync(tempFilepath)) {
-      if (process.platform === "win32") {
-        importPath = pathToFileURL(tempFilepath).href;
-      }
+    await writeFile(tempFilePath, script.code);
+    let importPath = pathToFileURL(tempFilePath).href;
+    const result = await import(importPath);
 
-      const result = await import(importPath);
-      await rm(tempFileDir, { recursive: true });
-
-      return result.default;
-    } else {
-      return null;
-    }
+    return result.default;
   } catch (error) {
     console.log(error);
   }

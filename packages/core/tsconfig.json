@@ -6,5 +6,6 @@
     "emitDeclarationOnly": false,
     "resolveJsonModule": true
   },
-  "include": ["src/*", "types/*"]
+  "include": ["src/*", "types/*", "src/plugins/helpers.ts"],
+  "exclude": ["dist"]
 }
