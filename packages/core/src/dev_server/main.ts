@@ -1,9 +1,9 @@
-import { H3, serve, serveStatic } from "h3";
+import { createEventStream, H3, serve, serveStatic } from "h3";
 import { loadConfig } from "../config/config_handler.ts";
 import { readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { devState, resolveToProjectRoot } from "../utils.ts";
-
+import { addStream, broadcast, removeStream } from "./streams.ts";
 const config = await loadConfig();
 
 const app = new H3();
@@ -56,7 +56,9 @@ app.use("/media/**", (event) => {
         .join("/");
 
       const path = join(
-        resolveToProjectRoot(config.bundler.filesystem!.projectFiles.mediaDir),
+        resolveToProjectRoot(
+          config.bundler.filesystem!.projectFiles!.mediaDir!,
+        ),
         parsedId,
       );
 
@@ -71,7 +73,9 @@ app.use("/media/**", (event) => {
         .join("/");
 
       const path = join(
-        resolveToProjectRoot(config.bundler.filesystem!.projectFiles.mediaDir),
+        resolveToProjectRoot(
+          config.bundler.filesystem!.projectFiles!.mediaDir!,
+        ),
         parsedId,
       );
 
@@ -85,6 +89,20 @@ app.use("/media/**", (event) => {
     },
   });
 });
+
+app.get("/events/", async (event) => {
+  const eventStream = createEventStream(event);
+  addStream(eventStream);
+
+  await broadcast("Test message");
+
+  eventStream.onClosed(() => {
+    removeStream(eventStream);
+  });
+
+  return eventStream.send();
+});
+
 const startServer = () => {
   return serve(app, {
     port: config.devServer!.port,

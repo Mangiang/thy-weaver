@@ -10,8 +10,8 @@ import ora from "ora";
 import pico from "picocolors";
 import { runRolldownn } from "./build_commands.ts";
 import { watch } from "chokidar";
-import { createEventStream } from "h3";
-import { app, startServer } from "./dev_server/main.ts";
+import { startServer } from "./dev_server/main.ts";
+import { broadcast } from "./dev_server/streams.ts";
 
 const { bundler } = await loadConfig();
 const { filesystem } = bundler;
@@ -85,20 +85,6 @@ export const runDev = async () => {
       updateState(firstResult);
     }
 
-    let eventStream: any;
-
-    app.get("/events/", (event) => {
-      eventStream = createEventStream(event);
-
-      eventStream.push("Server test message");
-
-      eventStream.onClosed(() => {
-        //console.log("Connection closed");
-      });
-
-      return eventStream.send();
-    });
-
     const server = startServer();
 
     console.log(pico.yellow(pico.bold("Waiting for file changes...")));
@@ -125,7 +111,7 @@ export const runDev = async () => {
       const result = await devBuilder();
       if (result) {
         updateState(result);
-        eventStream.push("update");
+        await broadcast("update");
       }
 
       console.log(pico.yellow(pico.bold("Waiting for file changes...")));
