@@ -14,9 +14,9 @@ import { platform } from "node:os";
 import ora from "ora";
 import pico from "picocolors";
 
-const config = await loadConfig();
-
 export const handleVendorFiles = async () => {
+  const config = await loadConfig();
+
   return {
     name: "handle-vendor-files",
     async buildStart() {
@@ -48,6 +48,8 @@ export const handleVendorFiles = async () => {
 };
 
 const handleVendorScripts = async (ctx: PluginContext, path: string) => {
+  const config = await loadConfig();
+
   const pattern = path + "/**/*.{js,ts}";
 
   try {
@@ -73,6 +75,8 @@ const handleVendorScripts = async (ctx: PluginContext, path: string) => {
 };
 
 const handleVendorStyles = async (ctx: PluginContext, path: string) => {
+  const config = await loadConfig();
+
   const pattern = path + "/**/*.css";
 
   try {

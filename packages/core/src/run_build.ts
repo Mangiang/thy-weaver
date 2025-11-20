@@ -1,40 +1,11 @@
-import { tweenode } from "tweenode";
-import { loadConfig } from "./config/config_handler.ts";
-import {
-  colorizeEmiter,
-  colorizeLabel,
-  resolveToProjectRoot,
-} from "./utils.ts";
+import { colorizeEmiter, colorizeLabel } from "./utils.ts";
 import ora from "ora";
 import pico from "picocolors";
-import { moveFiles, runRolldownn } from "./build_commands.ts";
-
-const { bundler } = await loadConfig();
-const { filesystem } = bundler;
-
-const tweego = await tweenode({
-  build: {
-    input: {
-      storyDir: resolveToProjectRoot(filesystem!.projectFiles!.storyDir!),
-      scripts: filesystem!.stagingDir + "/app.bundle.js",
-      styles: filesystem!.stagingDir + "/app.bundle.css",
-      htmlHead: resolveToProjectRoot(filesystem!.projectFiles!.htmlHead!),
-      modules: [
-        filesystem!.stagingDir + "/vendor.bundle.css",
-        filesystem!.stagingDir + "/vendor.bundle.js",
-      ],
-    },
-    output: {
-      mode: "file",
-      fileName: resolveToProjectRoot(filesystem!.dist + "/index.html"),
-    },
-  },
-  debug: {
-    writeToLog: true,
-  },
-});
+import { getTweego, moveFiles, runRolldownn } from "./build_commands.ts";
 
 const runTweego = async () => {
+  const tweego = await getTweego("file");
+
   const spinner = ora({
     prefixText: colorizeEmiter("TWEENODE"),
   });

@@ -116,8 +116,11 @@ export const fancyLogFormater = (
     `${emiterLabel} ${levelLabel == null ? "" : levelLabel} ${log.message}`,
   ];
 
+  // oxlint-disable-next-line no-unused-expressions
   log.cause ? result.push(`\n${log.cause}\n`) : null;
+  // oxlint-disable-next-line no-unused-expressions
   log.meta ? result.push(`\n${log.meta}\n`) : null;
+  // oxlint-disable-next-line no-unused-expressions
   log.stack ? result.push(`\n${log.stack}\n`) : null;
 
   return result.join("");

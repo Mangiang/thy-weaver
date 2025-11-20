@@ -15,7 +15,6 @@ import { loadConfig } from "./config/config_handler.ts";
 import { handleVendorFiles, rawImportSupport } from "./rolldown_plugins.ts";
 import { fancyLogFormater, isTS, resolveToProjectRoot } from "./utils.ts";
 
-const config = await loadConfig();
 //const mode = process.env.NODE_ENV || "development";
 
 const onLog = (
@@ -44,7 +43,9 @@ const onLog = (
   }
 };
 
-export const setupRolldown = () => {
+export const setupRolldown = async () => {
+  const config = await loadConfig();
+
   return {
     onLog,
     input: resolve(cwd(), config.bundler.filesystem!.projectFiles!.entryPoint!),

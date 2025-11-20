@@ -86,13 +86,26 @@ const options: Partial<Options> = {
   },
 };
 
-export const loadConfig = async () => {
-  const result = await lilconfig("weaver", options).load(
-    isTS
-      ? resolveToProjectRoot("thyweaver.config.ts")
-      : resolveToProjectRoot("thyweaver.config.js"),
-  );
-  return result!.config as ThyWevearOptions;
+const searcher = lilconfig("weaver", options);
+
+let configPromise: Promise<ThyWevearOptions> | null = null;
+
+export const loadConfig = async (): Promise<ThyWevearOptions> => {
+  if (configPromise) {
+    return configPromise;
+  }
+
+  configPromise = (async () => {
+    const result = await searcher.load(
+      isTS
+        ? resolveToProjectRoot("thyweaver.config.ts")
+        : resolveToProjectRoot("thyweaver.config.js"),
+    );
+
+    return deepmerge(defaultConfig, result!.config) as ThyWevearOptions;
+  })();
+
+  return configPromise;
 };
 
 /**

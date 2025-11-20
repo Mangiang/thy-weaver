@@ -1,4 +1,4 @@
-import { tweenode } from "tweenode";
+import type { tweenode } from "tweenode";
 import { loadConfig } from "./config/config_handler.ts";
 import {
   colorizeEmiter,
@@ -8,35 +8,16 @@ import {
 } from "./utils.ts";
 import ora from "ora";
 import pico from "picocolors";
-import { runRolldownn } from "./build_commands.ts";
+import { getTweego, runRolldownn } from "./build_commands.ts";
 import { watch } from "chokidar";
 import { startServer } from "./dev_server/main.ts";
 import { broadcast } from "./dev_server/streams.ts";
 
-const { bundler } = await loadConfig();
-const { filesystem } = bundler;
-
-const tweego = await tweenode({
-  build: {
-    input: {
-      storyDir: resolveToProjectRoot(filesystem!.projectFiles!.storyDir!),
-      scripts: filesystem!.stagingDir + "/app.bundle.js",
-      styles: filesystem!.stagingDir + "/app.bundle.css",
-      modules: [
-        filesystem!.stagingDir + "/vendor.bundle.css",
-        filesystem!.stagingDir + "/vendor.bundle.js",
-      ],
-    },
-    output: {
-      mode: "string",
-    },
-  },
-  debug: {
-    writeToLog: true,
-  },
-});
+let tweego: Awaited<ReturnType<typeof tweenode>> | undefined = undefined;
 
 const runTweego = async () => {
+  tweego = await getTweego("string");
+
   const spinner = ora({
     prefixText: colorizeEmiter("TWEENODE"),
   });
@@ -76,6 +57,8 @@ const devBuilder = async (): Promise<string | undefined> => {
 };
 
 export const runDev = async () => {
+  const { bundler } = await loadConfig();
+
   console.log(
     `\n${pico.bgMagenta(pico.bold(" ThyWeaver - Running in dev mode "))}ㅤ\n`,
   );
@@ -85,7 +68,7 @@ export const runDev = async () => {
       updateState(firstResult);
     }
 
-    const server = startServer();
+    const server = await startServer();
 
     console.log(pico.yellow(pico.bold("Waiting for file changes...")));
     console.log(
@@ -124,14 +107,18 @@ export const runDev = async () => {
       );
     });
   });
+};
 
+if (tweego !== undefined) {
   process.on("SIGTERM", () => {
+    //@ts-ignore
     tweego.kill();
     process.exit();
   });
 
   process.on("SIGINT", () => {
+    //@ts-ignore
     tweego.kill();
     process.exit();
   });
-};
+}
