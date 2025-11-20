@@ -8,6 +8,9 @@ import { runDev } from "./run_dev.ts";
 import { rm } from "fs/promises";
 import { resolveToProjectRoot } from "./utils.ts";
 import { handleTweegoSetup } from "./build_commands.ts";
+import { loadConfig } from "./config/config_handler.ts";
+
+const config = await loadConfig();
 
 program
   .name("weaver")
@@ -66,5 +69,13 @@ program
   .action((_str) => {
     console.log("WIP");
   });
+
+if (config.plugins) {
+  config.plugins.forEach((plugin) => {
+    if (plugin.command !== undefined) {
+      program.addCommand(plugin.command);
+    }
+  });
+}
 
 program.parse();

@@ -1,4 +1,5 @@
 import type { Config as SWCOptions } from "@swc/core";
+import type { Command } from "commander";
 
 export interface AdditionalAsset {
   /**
@@ -51,7 +52,13 @@ export interface DevServerOptions {
   twineDebug: boolean;
 }
 
+export interface Plugin {
+  name: string;
+  command?: Command;
+}
+
 export interface ThyWevearOptions {
+  plugins?: Plugin[];
   devServer?: DevServerOptions;
   bundler: BundlerOptions;
 }

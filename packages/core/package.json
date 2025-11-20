@@ -21,6 +21,11 @@
     },
     "./types": {
       "types": "./types/index.d.ts"
+    },
+    "./plugin_helpers": {
+      "import": "./dist/plugin_helpers.js",
+      "require": "./dist/plugin_helpers.js",
+      "types": "./dist/plugin_helpers.d.ts"
     }
   },
   "files": [
