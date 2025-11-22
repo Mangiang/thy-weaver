@@ -1,11 +1,15 @@
 import type { Command } from "commander";
+import type { ThyWevearOptions } from "../main.ts";
 
 export interface PluginContext {
-  config: any;
+  config: ThyWevearOptions;
 }
 
 export interface Plugin {
   name: string;
-  configureCli?: (program: Command) => void | Promise<void>;
+  configureCli?: (
+    program: Command,
+    context: PluginContext,
+  ) => void | Promise<void>;
 }
 export type PluginConstructor<Options = any> = (options?: Options) => Plugin;

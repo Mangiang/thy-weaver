@@ -1,7 +1,11 @@
 import type { Command } from "commander";
 import type { Plugin, PluginContext } from "./types.ts";
+import type { ThyWevearOptions } from "../main.ts";
 
-export const createPluginManager = (plugins: Plugin[], config: any) => {
+export const createPluginManager = (
+  plugins: Plugin[],
+  config: ThyWevearOptions,
+) => {
   const context: PluginContext = {
     config,
   };
@@ -40,7 +44,7 @@ export const createPluginManager = (plugins: Plugin[], config: any) => {
   };
 
   const registerCommands = async (program: Command) => {
-    await runParallel("configureCli", program);
+    await runParallel("configureCli", program, context);
   };
 
   return {

@@ -1,7 +1,22 @@
 import { fancyLogFormater, type Plugin } from "@thy-weaver/core/plugin_helpers";
 import { runCompile } from "./run_compile.ts";
+import type { Build } from "bun";
 
-export default function compilePlugin(option?: any): Plugin {
+export type Target = Build.Target;
+
+export interface PluginExecutableOptions {
+  windowTitle?: string;
+  windowsSpecific?: {
+    hideConsole?: boolean;
+  };
+  server?: {
+    port: number;
+  };
+}
+
+export default function compilePlugin(
+  options: PluginExecutableOptions = {},
+): Plugin {
   return {
     name: "executable-maker",
     configureCli(program) {
@@ -14,9 +29,8 @@ export default function compilePlugin(option?: any): Plugin {
             "Compiles and creates a standalone executable for the game",
           )
           .action(async () => {
-            console.log(option);
             if (process.versions.bun) {
-              await runCompile();
+              await runCompile(options);
             } else {
               console.log(
                 fancyLogFormater("BUNDLER", "ERROR", {

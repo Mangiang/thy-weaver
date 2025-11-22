@@ -1,9 +1,11 @@
 import { Webview } from "webview-bun";
+import config from "./config.json";
 
 const worker = new Worker("./worker.ts");
 
 const webview = new Webview();
-webview.navigate("http://localhost:3000/");
+webview.title = config.title;
+webview.navigate(`http://localhost:${config.port}/`);
 webview.run();
 
 worker.addEventListener("close", () => webview.destroy());

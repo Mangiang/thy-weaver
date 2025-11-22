@@ -1,11 +1,12 @@
 import { dirname, join } from "node:path";
 import { Hono } from "hono";
+import config from "./config.json";
 
 import index from "./index.html" with { type: "text" };
 import { serveStatic } from "hono/bun";
 
 const CWD = dirname(process.execPath);
-const MEDIA_FOLDER = join(CWD, "/media");
+const MEDIA_FOLDER = join(CWD, config.mediaPath);
 
 console.log("[ WORKER ] Hello world");
 console.log("\tCWD: " + CWD);
@@ -23,17 +24,24 @@ const app = new Hono();
 app.get("/", (c) => c.html(index));
 
 app.get(
-  "/media/*",
+  `${config.mediaPath}/*`,
   serveStatic({
     root: MEDIA_FOLDER,
     onNotFound: (path, c) => {
       console.log(`[ WORKER ] ${path} is not found, you access ${c.req.path}`);
     },
-    rewriteRequestPath: (path) => path.replace(/^\/media/, ""),
+    rewriteRequestPath: (path) => {
+      if (path.startsWith(config.mediaPath)) {
+        return (path = path.slice(config.mediaPath.length));
+      }
+
+      return path;
+    },
   }),
 );
 
 const server = Bun.serve({
+  port: config.port,
   fetch: app.fetch,
 });
 

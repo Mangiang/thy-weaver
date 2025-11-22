@@ -10,6 +10,7 @@ import { resolve } from "node:path";
 import ora from "ora";
 import pico from "picocolors";
 import { runBunCompilation } from "./compile_commands.ts";
+import { PluginExecutableOptions } from "./index.ts";
 
 const runTweego = async () => {
   const tweego = await getTweego("string");
@@ -35,7 +36,7 @@ const runTweego = async () => {
   return result;
 };
 
-export const runCompile = async () => {
+export const runCompile = async (options: PluginExecutableOptions) => {
   const {
     bundler: { filesystem },
   } = await loadConfig();
@@ -54,7 +55,7 @@ export const runCompile = async () => {
     return;
   }
   await moveFiles();
-  await runBunCompilation();
+  await runBunCompilation(options);
 
   return new Promise((resolve) => {
     console.log(
