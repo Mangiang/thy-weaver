@@ -11,7 +11,12 @@
 
 ---
 
-For more information check-out the [docs](https://greatsquare0.github.io/thy-weaver/)
+For more information check-out the [docs](https://greatsquare0.github.io/thy-weaver/) (WIP)
+
+## Requirements
+
+- `webview-bun`
+- `hono`
 
 ## License
 
