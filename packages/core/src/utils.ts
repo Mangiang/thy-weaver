@@ -47,7 +47,7 @@ export const win2posixPath = (path: string): string => {
   return normalize(path).replaceAll(sep, posix.sep);
 };
 
-type Emiters = "ROLLDOWN" | "TWEENODE" | "DEV SERVER" | "BUNDLER";
+type Emiters = "ROLLDOWN" | "TWEENODE" | "DEV SERVER" | "BUNDLER" | "PLUGIN";
 type LogLevel = "INFO" | "WARN" | "DEBUG" | "ERROR" | "PROGRESS";
 
 export const colorizeEmiter = (str: Emiters) => {
@@ -69,10 +69,16 @@ export const colorizeEmiter = (str: Emiters) => {
     case "TWEENODE":
       output = pico.bgCyan(pico.white(pico.bold(output)));
       break;
+    case "PLUGIN":
+      output = pico.bgCyanBright(pico.white(pico.bold(output)));
+      break;
   }
 
   if (str == "BUNDLER") {
     output = " " + output;
+  }
+  if (str == "PLUGIN") {
+    output = "  " + output;
   }
 
   return output;

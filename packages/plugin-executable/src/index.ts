@@ -1,23 +1,31 @@
 import { fancyLogFormater, type Plugin } from "@thy-weaver/core/plugin_helpers";
-import { Command } from "commander";
+import { runCompile } from "./run_compile.ts";
 
-const manifest = (): Plugin => {
+export default function compilePlugin(option?: any): Plugin {
   return {
     name: "executable-maker",
-    command: new Command("buildExec")
-      .description("Compiles and creates a standalone executable for the game")
-      .action(() => {
-        if (process.versions.bun) {
-          console.log("Hello");
-        } else {
-          console.log(
-            fancyLogFormater("BUNDLER", "ERROR", {
-              message: "Bun is required to make executables",
-            }),
-          );
-        }
-      }),
-  };
-};
+    configureCli(program) {
+      const buildCmd = program.commands.find((cmd) => cmd.name() === "build");
 
-export default manifest;
+      if (buildCmd) {
+        buildCmd
+          .command("compile")
+          .description(
+            "Compiles and creates a standalone executable for the game",
+          )
+          .action(async () => {
+            console.log(option);
+            if (process.versions.bun) {
+              await runCompile();
+            } else {
+              console.log(
+                fancyLogFormater("BUNDLER", "ERROR", {
+                  message: "Bun is required to make executables",
+                }),
+              );
+            }
+          });
+      }
+    },
+  };
+}

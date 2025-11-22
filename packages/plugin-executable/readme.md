@@ -6,7 +6,7 @@
 <h1 align='center'>plugin-executable</h1>
 
 <p align='center'>
-  A plugin for compiling games to executables
+  Experimental plugin for compiling games to executables
 </p>
 
 ---

@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  lib-weaver: link:C:/Users/kaio_/AppData/Local/pnpm/global/5/node_modules/lib-weaver
-
 importers:
 
   .:

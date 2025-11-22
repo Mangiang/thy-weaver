@@ -105,7 +105,9 @@ export const moveFiles = async () => {
   }
 };
 
-export const getTweego = async (mode: "file" | "string") => {
+export const getTweego = async (
+  mode: "file" | "string",
+): Promise<ReturnType<typeof tweenode>> => {
   const { bundler } = await loadConfig();
   const { filesystem } = bundler;
 

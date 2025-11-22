@@ -1,6 +1,6 @@
 {
   "name": "@thy-weaver/plugin-executable",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A plugin for compiling games to executables",
   "type": "module",
   "files": [
@@ -42,6 +42,9 @@
   },
   "dependencies": {
     "@thy-weaver/core": "workspace:*",
-    "commander": "^14.0.0"
+    "hono": "^4.10.6",
+    "ora": "catalog:",
+    "picocolors": "catalog:",
+    "webview-bun": "^2.4.0"
   }
 }

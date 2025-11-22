@@ -45,7 +45,7 @@
     "@clack/prompts": "^0.11.0",
     "deepmerge-ts": "^7.1.5",
     "mri": "^1.2.0",
-    "picocolors": "^1.1.1",
-    "tinyglobby": "^0.2.14"
+    "picocolors": "catalog:",
+    "tinyglobby": "catalog:"
   }
 }
