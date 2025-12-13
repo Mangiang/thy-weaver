@@ -6,10 +6,10 @@ import { swc } from "rollup-plugin-swc3";
 //import url, { type RollupUrlOptions } from "@rollup/plugin-url";
 import yaml from '@rollup/plugin-yaml';
 import type {
-    LogLevel,
-    LogOrStringHandler,
-    RolldownOptions,
-    RollupLog,
+  LogLevel,
+  LogOrStringHandler,
+  RolldownOptions,
+  RollupLog,
 } from "rolldown";
 import { withFilter } from 'rolldown/filter';
 
@@ -21,64 +21,64 @@ import { transform } from "@swc/core";
 //const mode = process.env.NODE_ENV || "development";
 
 const onLog = (
-    level: LogLevel,
-    log: RollupLog,
-    defaultHandler: LogOrStringHandler,
+  level: LogLevel,
+  log: RollupLog,
+  defaultHandler: LogOrStringHandler,
 ) => {
-    switch (level) {
-        case "debug":
-            defaultHandler("debug", fancyLogFormater("ROLLDOWN", "DEBUG", log));
-            break;
+  switch (level) {
+    case "debug":
+      defaultHandler("debug", fancyLogFormater("ROLLDOWN", "DEBUG", log));
+      break;
 
-        case "info":
-            defaultHandler("info", fancyLogFormater("ROLLDOWN", "INFO", log));
-            break;
+    case "info":
+      defaultHandler("info", fancyLogFormater("ROLLDOWN", "INFO", log));
+      break;
 
-        case "warn":
-            //Silence circular dependency warning
-            if (log.code !== "CIRCULAR_DEPENDENCY") {
-                defaultHandler("warn", fancyLogFormater("ROLLDOWN", "WARN", log));
-            }
+    case "warn":
+      //Silence circular dependency warning
+      if (log.code !== "CIRCULAR_DEPENDENCY") {
+        defaultHandler("warn", fancyLogFormater("ROLLDOWN", "WARN", log));
+      }
 
-            break;
-        default:
-            break;
-    }
+      break;
+    default:
+      break;
+  }
 };
 
 export const setupRolldown = async () => {
-    const config = await loadConfig();
+  const config = await loadConfig();
 
-    return {
-        onLog,
-        input: resolve(cwd(), config.bundler.filesystem!.projectFiles!.entryPoint!),
-        resolve: {
-            tsconfigFilename: isTS
-                ? resolveToProjectRoot("tsconfig.json")
-                : resolveToProjectRoot("jsconfig.json"),
+  return {
+    onLog,
+    input: resolve(cwd(), config.bundler.filesystem!.projectFiles!.entryPoint!),
+    resolve: {
+      tsconfigFilename: isTS
+        ? resolveToProjectRoot("tsconfig.json")
+        : resolveToProjectRoot("jsconfig.json"),
+    },
+    plugins: [
+      rawImportSupport(),
+      // @ts-expect-error
+      postcss({
+        module: false,
+        plugins: config.bundler.postcss!.plugins,
+        extract: true,
+        //sourceMap: mode === "development",
+        modules: false,
+        autoModules: false,
+        use: {
+          sass: {
+            silenceDeprecations: ["legacy-js-api"],
+          },
         },
-        plugins: [
-            rawImportSupport(),
-            // @ts-expect-error
-            postcss({
-                module: false,
-                plugins: config.bundler.postcss!.plugins,
-                extract: true,
-                //sourceMap: mode === "development",
-                modules: false,
-                autoModules: false,
-                use: {
-                    sass: {
-                        silenceDeprecations: ["legacy-js-api"],
-                    },
-                },
-            }),
-            handleVendorFiles(),
-            swc(config.bundler.swc),
-            withFilter(
-                yaml(),
-                { transform: { id: /\.yaml$/ } }
-            )
-        ],
-    } as RolldownOptions;
+      }),
+      handleVendorFiles(),
+      swc(config.bundler.swc),
+      withFilter(
+        yaml(),
+        { transform: { id: /\.yaml$/ } }
+      )
+    ],
+  } as RolldownOptions;
 };
