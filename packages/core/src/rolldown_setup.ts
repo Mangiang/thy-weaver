@@ -77,7 +77,7 @@ export const setupRolldown = async () => {
       swc(config.bundler.swc),
       withFilter(
         yaml(),
-        { transform: { id: /\.yaml$/ } }
+        { transform: { id: /\.ya?ml$/ } }
       )
     ],
   } as RolldownOptions;
